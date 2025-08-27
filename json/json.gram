@@ -1,0 +1,37 @@
+# PEG grammar 
+
+json: [atom] EOF
+
+atom:
+  | 'true'
+  | 'false'
+  | 'null'
+  | NAME
+  | NUMBER
+  | STRING
+  | list
+  | dict
+
+
+list: 
+  | "[" [atoms] "]"
+
+atoms: ','.atom+ [',']
+
+dict: 
+  | "{" [kvpairs] "}"
+
+kvpairs: ','.kvpair+ [','] 
+
+kvpair: key ':' value
+
+key: NAME | STRING | NUMBER
+
+value:
+  | 'true'
+  | 'false'
+  | 'null'
+  | NUMBER
+  | STRING
+  | list
+  | dict

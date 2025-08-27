@@ -1,0 +1,14 @@
+EOF
+NAME
+NUMBER
+STRING
+LSQB                    '['
+RSQB                    ']'
+COLON                   ':'
+COMMA                   ','
+LBRACE                  '{'
+RBRACE                  '}'
+DOUBLESLASH             '//'
+SLASHSTAR               '/*'
+STARSLASH               '*/'
+HASHTAG                 '#'
