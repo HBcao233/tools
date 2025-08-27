@@ -51,14 +51,19 @@
     const error_line_end = error_pos_end.line - pos_start.line;
     
     for (let i = 0; i < line_count; i++) {
-      const line = code.slice(idx_start, idx_end).replace(/^\n+|\n+$/g, '');
+      let line = code.slice(idx_start, idx_end).replace(/^\n+|\n+$/g, '');
       const before_text = line.slice(0, pos_start.column);
-      const space_count = str_width(before_text);
+      let space_count = str_width(before_text);
       
       const column_start = i < error_line_start ? line.length : error_pos_start.column;
       const column_end = i == error_line_end ? error_pos_end.column : line.length - 1;
       const error_text = line.slice(column_start, column_end);
       const arrow_count = str_width(error_text);
+      
+      if (line.length > 25) {
+        line = code.slice(pos_start.column - 10, pos_start.column + 15).replace(/^\n+|\n+$/g, '');
+        space_count = 10;
+      }
       
       res.push('  ' + line)
       if (arrow_count > 0) res.push('  ' + ' '.repeat(space_count) + '^'.repeat(arrow_count))
@@ -179,7 +184,7 @@
     
     toString() {
       return (
-        `Line ${this.pos_end.line + 1}\n` 
+        `Line ${this.pos_end.line + 1} Column ${this.pos_end.column}\n` 
         + _string_with_arrows(this.pos_start.code, this.pos_start, this.pos_end, this.error_pos_start, this.error_pos_end) +
         `\n  SyntaxError: ${this.message}`
       );
@@ -261,7 +266,7 @@
           }
           continue;
         }
-        if (DIGITS(this.char) || (this.char === '.' && DIGITS(this.lookahead(1))) ) {
+        if (this.char === '-' || DIGITS(this.char) || (this.char === '.' && DIGITS(this.lookahead(1))) ) {
           token = this.make_number();
         } else if (this.char in OP_DICT) {
           token = this.make_opertor()
@@ -280,7 +285,7 @@
         }
         res.push(token);
       }
-      res.push(new Token(Tokens.EOF, null, this.pos.copy()));
+      res.push(new Token(Tokens.EOF, null, this.pos.copy(), this.pos.copy()));
       return res;
     }
     
@@ -325,7 +330,7 @@
       let num = []
       let pos_start = this.pos.copy()
       let is_float = false
-      while (LETTERS_SYMBOLS_DIGITS(this.char) || this.char == '_' || this.char === '.') {
+      while (LETTERS_SYMBOLS_DIGITS(this.char) || this.char == '_' || this.char === '.' || this.char === '-') {
         if (this.char == '.') {
           if (base != 10) {
             this.advance()
@@ -335,7 +340,7 @@
         } else if (this.char == '_') {
           this.advance();
           continue
-        } else if (!bases[base][1](this.char)) {
+        } else if (!bases[base][1](this.char) && this.char !== '-') {
           this.advance()
           throw new _SyntaxError(`invalid ${bases[base][0]} literal`, pos_start, this.pos.copy());
         }
@@ -403,7 +408,7 @@
       if (res in KEYWORDS) {
         return new Token(Tokens.KEYWORD, KEYWORDS[res], pos_start, this.pos.copy())
       } 
-      return new Token(Tokens.NAME, res, pos_start, this.pos)
+      return new Token(Tokens.NAME, res, pos_start, this.pos.copy())
     }
   }
   
@@ -832,13 +837,17 @@ window.addEventListener('load', () => {
   
   $$('.editor').forEach(e => {
     showLineNumbers(e);
-    const textareaStyles = window.getComputedStyle(e.querySelector('textarea'));
+    let textarea = e.querySelector('textarea')
+    const textareaStyles = window.getComputedStyle(textarea);
     [
       'fontFamily', 'fontSize', 'fontWeight', 
       'letterSpacing', 'lineHeight', 'padding',
     ].forEach(property => {
       e.querySelector('.numbers').style[property] = textareaStyles[property];
     });
+    textarea.addEventListener('scroll', () => {
+      e.querySelector('.numbers').scrollTo(0, textarea.scrollTop)
+    })
   });
   document.addEventListener('input', (e) => {
     showLineNumbers(e.target.parentElement)
