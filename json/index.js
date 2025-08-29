@@ -5,16 +5,6 @@
   window['isString'] = s => Object.prototype.toString.call(s) === "[object String]";
   window['isArrayLike'] = s => s != null && typeof s[Symbol.iterator] === 'function';
 
-  const string_width = (s) => {
-    const textareaStyles = window.getComputedStyle($('#input'));
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    // 保持canvas的画笔与字体设置一致
-    const font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    context.font = font;
-    return context.measureText(s + '').width
-  }
-
   const widths = [
     [126, 1], [159, 0], 
     [687, 1], [710, 0], 
@@ -451,7 +441,7 @@
     }
     
     parse_html() {
-      return `<div class="single"><input value="${this.value.value}" style="width: ${string_width(this.value.value) + 4}px"/></div>`
+      return `<div class="single"><span class="single_value" contenteditable>${this.value.value}</span></div>`
     }
   }
   class NullNode extends SingleNode {
@@ -472,7 +462,7 @@
     }
     
     parse_html() {
-      return `<div class="single string"><div class="string_start">&quot;</div><input value="${this.value.value}" style="width: ${string_width(this.value.value) + 4}px"/><div class="string_end">&quot;</div></div>`
+      return `<div class="string_start">&quot;</div><div class="single string"><span class="single_value" contenteditable>${this.value.value.replace('\n', '\\n')}</span></div><div class="string_end">&quot;</div>`
     }
   }
   
@@ -860,8 +850,20 @@ window.addEventListener('load', () => {
     const lines = calcLines(e.querySelector('.input'));
     const lineDoms = Array.from({
       length: lines.length,
-    }, (_, i) => `<div>${lines[i] || '&nbsp;'}</div>`);
+    }, (_, i) => `<span>${lines[i] || ''}<br></span>`);
     e.querySelector('.numbers').innerHTML = lineDoms.join('');
+  }
+  const make_output = () => {
+    let text = input.value.trim();
+    let node = formatting(text)
+    if (isString(node)) {
+      res = node;
+      output.innerText = res;
+    } else {
+      res = node.parse(indent)
+      output.innerHTML = node.parse_html(indent);
+    }
+    s.setItem('output', res);
   }
   
   let input = document.getElementById('input');
@@ -877,15 +879,7 @@ window.addEventListener('load', () => {
   }
   if (x = s.getItem('input')) {
     input.value = x;
-  }
-  if (x = s.getItem('output')) {
-    let node = formatting(x);
-    if (isString(node)) {
-      output.innerText = node;
-    } else {
-      output.innerHTML = node.parse_html(indent);
-      res = node.parse(indent);
-    }
+    make_output()
   }
   
   $$('.editor').forEach(e => {
@@ -903,21 +897,8 @@ window.addEventListener('load', () => {
     })
   });
   
-  const make_output = () => {
-    let text = input.value.trim();
-    let node = formatting(text)
-    if (isString(node)) {
-      res = node;
-      output.innerText = res;
-    } else {
-      res = node.parse(indent)
-      output.innerHTML = node.parse_html(indent);
-    }
-    s.setItem('output', res);
-  }
-  
   document.addEventListener('input', (e) => {
-    make_output()
+    if (e.target.closest('#input')) make_output()
     showLineNumbers(e.target.parentElement)
   })
   
