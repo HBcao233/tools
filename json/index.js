@@ -1,9 +1,19 @@
 (function(){
   window['$'] = document.querySelector.bind(document);
   window['$$'] = document.querySelectorAll.bind(document);
-  const isNumber = s => Object.prototype.toString.call(s) === "[object Number]";
-  const isString = s => Object.prototype.toString.call(s) === "[object String]";
-  const isArrayLike = s => s != null && typeof s[Symbol.iterator] === 'function';
+  window['isNumber'] = s => Object.prototype.toString.call(s) === "[object Number]";
+  window['isString'] = s => Object.prototype.toString.call(s) === "[object String]";
+  window['isArrayLike'] = s => s != null && typeof s[Symbol.iterator] === 'function';
+
+  const string_width = (s) => {
+    const textareaStyles = window.getComputedStyle($('#input'));
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    // 保持canvas的画笔与字体设置一致
+    const font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
+    context.font = font;
+    return context.measureText(s + '').width
+  }
 
   const widths = [
     [126, 1], [159, 0], 
@@ -123,8 +133,13 @@
     static STARSLASH = 'STARSLASH';  // */
     static HASHTAG = 'HASHTAG';  // #
   }
+  
   function ISEOF(type) {
     return type === Tokens.EOF;
+  }
+  
+  const len = (s) => {
+    return s = s + '', s.replace(/[\x00-\x7f]/g, '').length + s.replace(/[^\x00-\xff]/g, '').length / 2;
   }
   
   OP_DICT = {
@@ -434,6 +449,10 @@
     parse() {
       return this.value.value + '';
     }
+    
+    parse_html() {
+      return `<div class="single"><input value="${this.value.value}" style="width: ${string_width(this.value.value) + 4}px"/></div>`
+    }
   }
   class NullNode extends SingleNode {
     type = 'null'
@@ -450,6 +469,10 @@
     parse() {
       if (isString(this.value.value)) return JSON.stringify(this.value.value);
       return '"' + this.value.value + '"';
+    }
+    
+    parse_html() {
+      return `<div class="single string"><div class="string_start">&quot;</div><input value="${this.value.value}" style="width: ${string_width(this.value.value) + 4}px"/><div class="string_end">&quot;</div></div>`
     }
   }
   
@@ -476,6 +499,16 @@
       }
       return `[${res.join(',')}]`;
     }
+    
+    parse_html(indent) {
+      let res = [];
+      for (const v of this.items) {
+        res.push(
+          `<div class="list_value">${v.parse_html(indent)}</div>`
+        )
+      }
+      return `<div class="list indent-${indent}"><div class="list_start">[</div><div class="list_values">${res.join('<div class="list_value_sep">,</div>' + (indent !== null && indent !== undefined ? '<br>':''))}</div><div class="list_end">]</div></div>`;
+    }
   }
   
   class DictNode extends ASTNode {
@@ -500,6 +533,16 @@
         return '{' + ('\n' + res.join(',\n')).split('\n').join(ind) + '\n}'
       }
       return `{${res.join(',')}}`;
+    }
+    
+    parse_html(indent) {
+      let res = [];
+      for (const [k, v] of this.items) {
+        res.push(
+          `<div class="dict_item"><div class="dict_key">${k.parse_html(indent)}</div><div class="dict_sep">:</div><div class="dict_value">${v.parse_html(indent)}</div></div>`
+        )
+      }
+      return `<div class="dict indent-${indent}"><div class="dict_start">{</div><div class="dict_items">${res.join('<div class="dict_value_sep">,</div>' + (indent !== null && indent !== undefined ? '<br>':''))}</div><div class="dict_end">}</div></div>`;
     }
   }
   
@@ -712,14 +755,13 @@
     }
   } 
 
-  const formatting = (s, indent) => {
-    if (indent === undefined) indent = null;
+  const formatting = (s) => {
     let lexer = new Lexer(s);
     try {
       let tokens = lexer.parse();
       let parser = new Parser(tokens);
       let node = parser.parse();
-      return node.parse(indent);
+      return node;
     } catch (e) {
       if (!(e instanceof _SyntaxError)) {
         throw e;
@@ -755,20 +797,18 @@ window.addEventListener('load', () => {
    */
   const calcStringLines = (sentence, width, textarea) => {
     if (!width) return 0;
-    const textareaStyles = window.getComputedStyle(textarea);
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    // 保持canvas的画笔与字体设置一致
-    const font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
-    context.font = font;
-    
     // 将句子拆分，如果是纯英文句子可以使用.split(' ')进行拆分提升效率
     const words = sentence.split('');
     // 一个句子占据的行数
     let lineCount = 0;
-    
     let currentLine = '';
     for (let i = 0; i < words.length; i++) {
+      const textareaStyles = window.getComputedStyle(textarea);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      // 保持canvas的画笔与字体设置一致
+      const font = `${textareaStyles.fontSize} ${textareaStyles.fontFamily}`;
+      context.font = font;
       // 获取被测量文本的TextMetrics对象，主要拿width
       const wordWidth = context.measureText(words[i]).width;
       const lineWidth = context.measureText(currentLine).width;
@@ -787,7 +827,8 @@ window.addEventListener('load', () => {
   }
   
   const calcLines = (textarea) => {
-    const lines = textarea.value.split('\n');
+    const text = textarea.value || textarea.innerText
+    const lines = text.split('\n');
     const textareaWidth = textarea.getBoundingClientRect().width;
     // textarea滚动条宽度，没有则为0
     const textareaScrollWidth = textareaWidth - textarea.clientWidth;
@@ -816,7 +857,7 @@ window.addEventListener('load', () => {
     return lineNumbers;
   }
   const showLineNumbers = (e) => {
-    const lines = calcLines(e.querySelector('textarea'));
+    const lines = calcLines(e.querySelector('.input'));
     const lineDoms = Array.from({
       length: lines.length,
     }, (_, i) => `<div>${lines[i] || '&nbsp;'}</div>`);
@@ -828,16 +869,28 @@ window.addEventListener('load', () => {
   
   const s = window.localStorage;
   let x;
+  let indent = 2;
+  let res;
+  if (x = s.getItem('indent')) {
+    if (x == 'null') indent = null;
+    else indent = parseInt(x);
+  }
   if (x = s.getItem('input')) {
     input.value = x;
   }
   if (x = s.getItem('output')) {
-    output.value = x;
+    let node = formatting(x);
+    if (isString(node)) {
+      output.innerText = node;
+    } else {
+      output.innerHTML = node.parse_html(indent);
+      res = node.parse(indent);
+    }
   }
   
   $$('.editor').forEach(e => {
     showLineNumbers(e);
-    let textarea = e.querySelector('textarea')
+    let textarea = e.querySelector('.input')
     const textareaStyles = window.getComputedStyle(textarea);
     [
       'fontFamily', 'fontSize', 'fontWeight', 
@@ -849,38 +902,49 @@ window.addEventListener('load', () => {
       e.querySelector('.numbers').scrollTo(0, textarea.scrollTop)
     })
   });
+  
+  const make_output = () => {
+    let text = input.value.trim();
+    let node = formatting(text)
+    if (isString(node)) {
+      res = node;
+      output.innerText = res;
+    } else {
+      res = node.parse(indent)
+      output.innerHTML = node.parse_html(indent);
+    }
+    s.setItem('output', res);
+  }
+  
   document.addEventListener('input', (e) => {
+    make_output()
     showLineNumbers(e.target.parentElement)
   })
-
+  
   document.addEventListener('click', e => {
-    let text, res;
+    let text, node;
     switch (true) {
       case !!e.target.closest('.formatting'):
-        text = input.value.trim();
-        res = formatting(text, 2)
-        
-        output.value = res;
-        s.setItem('output', res);
+        indent = 2;
+        s.setItem('indent', indent);
+        make_output();
         showLineNumbers($('.output'));
         break;
         
       case !!e.target.closest('.compress'):
-        text = input.value.trim();
-        res = formatting(text);
-        
-        output.value = res;
-        s.setItem('output', res);
+        indent = null;
+        s.setItem('indent', indent);
+        make_output()
         showLineNumbers($('.output'));
         break;
       
       case !!e.target.closest('.copy'):
-        copyToClipboard(output.value)
+        copyToClipboard(res)
         break;
       
       case !!e.target.closest('.clear'):
         input.value = '';
-        output.value = '';
+        output.innerHTML = '';
         s.setItem('input', '');
         s.setItem('output', '');
         $$('.editor').forEach(e => {
