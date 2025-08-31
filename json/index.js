@@ -152,6 +152,9 @@
     'true': true,
     'false': false,
     'null': null,
+    'True': true,
+    'False': false,
+    'None': null,
   }
   
   class Position {
