@@ -46,6 +46,7 @@
   border: none;
   outline: none;
   white-space: pre-wrap;
+  font-size: 13.3333px;
   font-family: monospace;
   overflow: auto;
   word-break: break-all;
@@ -130,6 +131,7 @@
 }
 .dict.indent-2 .dict_items {
   margin-left: 1em;
+  border-left: 1px dashed #9999999f;
 }
 .list.indent-null .list_values {
   margin-left: 0;
@@ -137,4 +139,5 @@
 }
 .list.indent-2 .list_values {
   margin-left: 1em;
+  border-left: 1px dashed #9999999f;
 }
