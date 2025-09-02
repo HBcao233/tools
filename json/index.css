@@ -118,10 +118,6 @@
 .list_value_sep {
   display: inline;
 }
-
-.dict_items {
-  display: block;
-}
 .dict_sep {
   margin-right: 0.5em;
 }
@@ -140,4 +136,39 @@
 .list.indent-2 .list_values {
   margin-left: 1em;
   border-left: 1px dashed #9999999f;
+}
+
+.dict.indent-2 .dict_items:not(:has(div)),
+.list.indent-2 .list_values:not(:has(div)) {
+  display: inline;
+  margin-left: 0;
+  border-left: none;
+}
+
+.collapse_btn {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background: url(collapse.svg) no-repeat;
+  background-size: contain;
+  transform: translateY(2px);
+}
+.collapse .collapse_btn {
+  background-image: url(expand.svg);
+}
+.dict.collapse .dict_items, 
+.list.collapse .list_values {
+  margin-left: 0;
+  display: inline;
+  border-left: none;
+}
+.dict.collapse .dict_items div, 
+.dict.collapse .dict_items br, 
+.list.collapse .list_values div,
+.list.collapse .list_values br {
+  display: none;
+}
+.dict.collapse .dict_items:after, 
+.list.collapse .list_values:after {
+  content: '...';
 }
