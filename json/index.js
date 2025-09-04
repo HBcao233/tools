@@ -4,6 +4,12 @@
   window['isNumber'] = s => Object.prototype.toString.call(s) === "[object Number]";
   window['isString'] = s => Object.prototype.toString.call(s) === "[object String]";
   window['isArrayLike'] = s => s != null && typeof s[Symbol.iterator] === 'function';
+  
+  const htmlEncode = (str) => {
+    let temp = document.createElement("div");
+    (temp.textContent != undefined) ? (temp.textContent = str) : (temp.innerText = str);
+    return temp.innerHTML;
+  }
 
   const widths = [
     [126, 1], [159, 0], 
@@ -141,12 +147,14 @@
     ':': Tokens.COLON,
   }
   ESCAPE_CHAR = {
-    'n': '\n',
-    't': '\t',
-    'a': '\a',
-    'v': '\v',
-    'r': '\r',
+    '"': '"',
     '\\': '\\',
+    '/': '/',
+    'b': '\b',
+    'f': '\f',
+    'n': '\n',
+    'r': '\r',
+    't': '\t',
   }
   KEYWORDS = {
     'true': true,
@@ -382,9 +390,24 @@
           throw new _SyntaxError(`unterminated string literal (excepted ${quotation === "'" ? `"'"` : `'${quotation}'`})`, pos_start, this.pos.copy());
         }
         if (escape_character) {
-          res.push(ESCAPE_CHAR[this.char] || this.char)
           escape_character = false;
-          this.advance();
+          if (this.char !== 'u') {
+            res.push(ESCAPE_CHAR[this.char] || this.char)
+            this.advance();
+            continue;
+          } else {
+            let pos_start1 = this.pos.copy();
+            this.advance();
+            let u = [];
+            for (let i = 0; i < 4; i++) {
+              if (!('0123456789abcdefABCDEF'.includes(this.char))) {
+                throw new _SyntaxError('Invalid Unicode escape sequence', pos_start1, this.pos.copy());
+              }
+              u.push(this.char);
+              this.advance();
+            }
+            res.push(String.fromCharCode(parseInt(u.join(''), 16)))
+          }
           continue;
         }
         if (this.char == '\\') {
@@ -465,7 +488,7 @@
     }
     
     parse_html() {
-      return `<div class="string_start">&quot;</div><div class="single string"><span class="single_value" contenteditable>${this.value.value.replace('\n', '\\n')}</span></div><div class="string_end">&quot;</div>`
+      return `<div class="string_start">&quot;</div><div class="single string"><span class="single_value" contenteditable>${htmlEncode(this.value.value)}</span></div><div class="string_end">&quot;</div>`
     }
   }
   
