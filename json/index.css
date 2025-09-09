@@ -108,18 +108,22 @@
 .dict_start, 
 .dict_end,
 .dict_item,
+.dict_item_sep,
 .dict_key, 
 .dict_sep,
 .dict_value,
-.dict_value_sep,
 .list,
 .list_start,
 .list_end,
-.list_value,
-.list_value_sep {
+.list_item,
+.list_item_sep,
+.list_key,
+.list_sep,
+.list_value {
   display: inline;
 }
-.dict_sep {
+.dict_sep, 
+.list_sep {
   margin-right: 0.5em;
 }
 .dict.indent-null .dict_items {
@@ -130,17 +134,17 @@
   margin-left: 1em;
   border-left: 1px dashed #9999999f;
 }
-.list.indent-null .list_values {
+.list.indent-null .list_items {
   margin-left: 0;
   display: inline;
 }
-.list.indent-2 .list_values {
+.list.indent-2 .list_items {
   margin-left: 1em;
   border-left: 1px dashed #9999999f;
 }
 
 .dict.indent-2 .dict_items:not(:has(div)),
-.list.indent-2 .list_values:not(:has(div)) {
+.list.indent-2 .list_items:not(:has(div)) {
   display: inline;
   margin-left: 0;
   border-left: none;
@@ -158,18 +162,18 @@
   background-image: url(expand.svg);
 }
 .dict.collapse .dict_items, 
-.list.collapse .list_values {
+.list.collapse .list_items {
   margin-left: 0;
   display: inline;
   border-left: none;
 }
 .dict.collapse .dict_items div, 
 .dict.collapse .dict_items br, 
-.list.collapse .list_values div,
-.list.collapse .list_values br {
+.list.collapse .dict_items div,
+.list.collapse .list_items br {
   display: none;
 }
 .dict.collapse .dict_items:after, 
-.list.collapse .list_values:after {
+.list.collapse .list_items:after {
   content: '...';
 }

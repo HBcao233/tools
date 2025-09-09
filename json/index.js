@@ -148,7 +148,6 @@
   }
   ESCAPE_CHAR = {
     '"': '"',
-    '\\': '\\',
     '/': '/',
     'b': '\b',
     'f': '\f',
@@ -518,12 +517,12 @@
     
     parse_html(indent) {
       let res = [];
-      for (const v of this.items) {
+      for (let i = 0; i < this.items.length; i++) {
         res.push(
-          `<div class="list_value">${v.parse_html(indent)}</div>`
+          `<div class="list_item"><div class="list_key">${i}</div><div class="list_sep">:</div><div class="list_value">${this.items[i].parse_html(indent)}</div></div>`
         )
       }
-      return `<div class="list indent-${indent}"><div class="collapse_btn"></div><div class="list_start">[</div><div class="list_values">${res.join('<div class="list_value_sep">,</div>' + (indent !== null && indent !== undefined ? '<br>':''))}</div><div class="list_end">]</div></div>`;
+      return `<div class="list indent-${indent}"><div class="collapse_btn"></div><div class="list_start">[</div><div class="list_items">${res.join('<div class="list_item_sep">,</div>' + (indent !== null && indent !== undefined ? '<br>':''))}</div><div class="list_end">]</div></div>`;
     }
   }
   
@@ -558,7 +557,7 @@
           `<div class="dict_item"><div class="dict_key">${k.parse_html(indent)}</div><div class="dict_sep">:</div><div class="dict_value">${v.parse_html(indent)}</div></div>`
         )
       }
-      return `<div class="dict indent-${indent}"><div class="collapse_btn"></div><div class="dict_start">{</div><div class="dict_items">${res.join('<div class="dict_value_sep">,</div>' + (indent !== null && indent !== undefined ? '<br>':''))}</div><div class="dict_end">}</div></div>`;
+      return `<div class="dict indent-${indent}"><div class="collapse_btn"></div><div class="dict_start">{</div><div class="dict_items">${res.join('<div class="dict_item_sep">,</div>' + (indent !== null && indent !== undefined ? '<br>':''))}</div><div class="dict_end">}</div></div>`;
     }
   }
   
