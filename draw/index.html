@@ -1,0 +1,79 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="https://i.postimg.cc/h43dBD2F/c.jpg">
+  <meta property="og:title" content="AI 画画">
+  <meta property="og:description" content="AI 绘画">
+  <meta property="og:image" content="https://i.postimg.cc/h43dBD2F/c.jpg">
+  <title>AI 绘画</title>
+  
+  <link rel="stylesheet" href="./index.css">
+  <script src="./index.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h2 class="title">AI 绘画</h2>
+    <form class="form">
+      <input type="normal" class="input" id="model" name="model" placeholder="模型" />
+      <textarea class="input" id="prompt" name="prompt" placeholder="正面提示词"></textarea>
+      <textarea class="input" id="negative_prompt" name="negative_prompt" placeholder="负面提示词"></textarea>
+      <div class="row">
+        <div class="text">比例</div>
+        <label class="option">
+          <input type="radio" name="ratio" value="1:1" checked />
+          <div class="text">1:1</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="ratio" value="4:3" />
+          <div class="text">4:3</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="ratio" value="3:4" />
+          <div class="text">3:4</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="ratio" value="16:9" />
+          <div class="text">16:9</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="ratio" value="9:16" />
+          <div class="text">9:16</div>
+        </label>
+      </div>
+      <div class="row">
+        <div class="text">尺寸</div>
+        <label class="option">
+          <input type="radio" name="size" value="360" checked />
+          <div class="text">360p</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="size" value="480" />
+          <div class="text">480p</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="size" value="720" />
+          <div class="text">720p</div>
+        </label>
+        <label class="option">
+          <input type="radio" name="size" value="1080" />
+          <div class="text">1080p</div>
+        </label>
+      </div>
+      <label class="field">
+        <div class="text">步数</div>
+        <input type="normal" class="input" name="steps" value="25" />
+      </label>
+      <div class="controls">
+        <button class="btn draw" type="button">绘画</button>
+      </div>
+      
+      <div id="output"></div>
+      <img class="result" id="result" src="" onerror="this.style.opacity=0" />
+      
+    </form>
+  </div>
+</body>
+
+</html>

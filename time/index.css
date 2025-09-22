@@ -1,0 +1,67 @@
+input.number,
+select.number {
+  width: 22px;
+  height: 20px;
+  margin: 0;
+  padding: 0 3px;
+  color: #000;
+  border: none;
+  border-bottom: 2px solid #000;
+  background-color: transparent;
+  font-weight: bold;
+  outline: none;
+  text-align: right;
+  appearance: none;
+}
+.calendar-box {
+  display: flex;
+  justify-content: center;
+}
+
+.calendar {
+  border: 2px solid #000;
+  color: #000;
+  border-radius: 10px;
+}
+.calendar th.monthdown img,
+.calendar th.monthup img {
+  width: 15px;
+  height: 15px;
+}
+.calendar tr:nth-child(1) th {
+  background: unset;
+  font-weight: normal;
+}
+.calendar th {
+  height: 23px;
+  font-size: 16px;
+}
+.calendar td {
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  text-align: center;
+  border: 2px solid transparent;
+}
+.calendar td.active {
+  border-radius: 10px;
+  background: #000;
+  color: #fff;
+  border: none;
+}
+.time-box {
+  background: transparent !important;
+  font-size: 16px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+.timestamp-box {
+  margin-left: 20px;
+}
+input.timestamp {
+  width: 90px;
+  height: 30px;
+  padding-top: 5px;
+}

@@ -1,0 +1,287 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="https://i.postimg.cc/h43dBD2F/c.jpg">
+  <meta name="title" itemprop="name" property="og:title" content="时间戳格式化">
+  <meta name="description" itemprop="description" property="og:description" content="时间戳 timestamp 格式化器">
+  <meta name="image" itemprop="image" property="og:image" content="https://i.postimg.cc/h43dBD2F/c.jpg">
+  <title>时间戳 格式化</title>
+  
+  <link rel="stylesheet" href="./index.css">
+  <script src="./index.js"></script>
+</head>
+<body>
+  <div class="date_selecter">
+    <div class="calendar-box">
+      <table class="calendar">
+        <tr>
+          <th class="monthdown"><img src="/static/svg/left.svg" /></th>
+          <th></th>
+          <th colspan="2">
+            <select type="text" class="number year" name="year" value="2025" style="width: 55px"></select>
+          </th>
+          <th colspan="2" style="text-align: left">
+            <select type="text" class="number month" name="month" value="8" style="width: 40px">
+              <option value="1">1 月</option>
+              <option value="2">2 月</option>
+              <option value="3">3 月</option>
+              <option value="4">4 月</option>
+              <option value="5">5 月</option>
+              <option value="6">6 月</option>
+              <option value="7">7 月</option>
+              <option value="8">8 月</option>
+              <option value="9">9 月</option>
+              <option value="10">10 月</option>
+              <option value="11">11 月</option>
+              <option value="12">12 月</option>
+            </select>
+          </th>
+          <th class="monthup"><img src="/static/svg/right.svg" /></th>
+        </tr>
+        <tr>
+          <th>一</th>
+          <th>二</th>
+          <th>三</th>
+          <th>四</th>
+          <th>五</th>
+          <th>六</th>
+          <th>日</th>
+        </tr>
+        <tr>
+          <td data-index="1"></td>
+          <td data-index="2"></td>
+          <td data-index="3"></td>
+          <td data-index="4"></td>
+          <td data-index="5"></td>
+          <td data-index="6"></td>
+          <td data-index="7"></td>
+        </tr>
+        <tr>
+          <td data-index="8"></td>
+          <td data-index="9"></td>
+          <td data-index="10"></td>
+          <td data-index="11"></td>
+          <td data-index="12"></td>
+          <td data-index="13"></td>
+          <td data-index="14"></td>
+        </tr>
+        <tr>
+          <td data-index="15"></td>
+          <td data-index="16"></td>
+          <td data-index="17"></td>
+          <td data-index="18"></td>
+          <td data-index="19"></td>
+          <td data-index="20"></td>
+          <td data-index="21"></td>
+        </tr>
+        <tr>
+          <td data-index="22"></td>
+          <td data-index="23"></td>
+          <td data-index="24"></td>
+          <td data-index="25"></td>
+          <td data-index="26"></td>
+          <td data-index="27"></td>
+          <td data-index="28"></td>
+        </tr>
+        <tr>
+          <td data-index="29"></td>
+          <td data-index="30"></td>
+          <td data-index="31"></td>
+          <td data-index="32"></td>
+          <td data-index="33"></td>
+          <td data-index="34"></td>
+          <td data-index="35"></td>
+        </tr>
+        <tr>
+          <td data-index="36"></td>
+          <td data-index="37"></td>
+          <td data-index="38"></td>
+          <td data-index="39"></td>
+          <td data-index="40"></td>
+          <td data-index="41"></td>
+          <td data-index="42"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="row time-box">
+      <select type="text" class="number year" name="year" value="2025" style="width: 40px"></select>
+      <span>年</span>
+      <select type="text" class="number month" name="month" value="8">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
+      <span>月</span>
+      <select type="text" class="number day" name="day" value="25" ></select>
+      <span>日</span>
+      <select type="text" class="number hour" name="hour">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23" checked>23</option>
+      </select>
+      <span>时</span>
+      <select type="text" class="number minute" name="minute">
+        <option value="0" checked>0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>
+      </select>
+      <span>分</span>
+      <select type="text" class="number second" name="second">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>
+      </select>
+      <span>秒</span>
+    </div>
+    <div class="timestamp-box">
+      <input class="number timestamp" />
+    </div>
+  </div>
+  
+</body>
+</html>
