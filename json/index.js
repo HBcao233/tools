@@ -683,15 +683,7 @@
 
       let items = this.atoms();
       if (this.token.type != Tokens.RSQB) {
-        items.push(new WarningNode(new Token(Tokens.STRING, 'missing a "["', null, null)))
-        /*
-        throw new _SyntaxError(
-          'expected "]"', 
-          pos_start, 
-          this.token.pos_end.copy(), 
-          this.token.pos_start.copy(), 
-          this.token.pos_end.copy(), 
-        )*/
+        items.push(new WarningNode(new Token(Tokens.STRING, 'expected "]"', null, null)))
       } else this.advance();
       return new ListNode(items, pos_start, this.token.pos_end.copy());
     }
@@ -728,13 +720,6 @@
           new StringNode(new Token(Tokens.STRING, '', null, null)),
           new WarningNode(new Token(Tokens.STRING, 'expected "}"', null, null)), 
         ])
-        /*throw new _SyntaxError(
-          'expected "}"',
-          pos_start,
-          this.token.pos_end.copy(), 
-          this.token.pos_start.copy(), 
-          this.token.pos_end.copy(), 
-        )*/
       } else this.advance();
       return new DictNode(items, pos_start, this.token.pos_end.copy());
     }
@@ -756,7 +741,7 @@
         k = this.key();
       } catch (e) {
         return [
-          new ErrorNode(new Token(Tokens.STRING, "missing a key", null, null)), 
+          new ErrorNode(new Token(Tokens.STRING, "expected a key", null, null)), 
           new StringNode(new Token(Tokens.STRING, '', null, null)),
         ]
       }
