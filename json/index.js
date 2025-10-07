@@ -211,7 +211,7 @@
       this.type = type;
       this.value = value;
       this.pos_start = pos_start;
-      if (!pos_end) pos_end = pos_start.copy();
+      if (pos_end === undefined) pos_end = pos_start.copy();
       this.pos_end = pos_end;
     }
     
@@ -274,7 +274,7 @@
             pos_start = this.pos.copy()
             this.advance();
             throw new _SyntaxError(
-              "excepted '/' or '*'", 
+              "expected '/' or '*'", 
               pos_start,
               this.pos.copy()
             );
@@ -320,7 +320,7 @@
       }
       if (this.char !== '*' || this.lookahead(1) !== '/') {
         throw new _SyntaxError(
-          `excepted '*/'`,
+          `expected '*/'`,
           pos_start,
           this.pos.copy(),
         );
@@ -345,7 +345,7 @@
       let num = []
       let pos_start = this.pos.copy()
       let is_float = false
-      while (LETTERS_SYMBOLS_DIGITS(this.char) || this.char == '_' || this.char === '.' || this.char === '-') {
+      while (this.char && LETTERS_SYMBOLS_DIGITS(this.char) || this.char == '_' || this.char === '.' || this.char === '-') {
         if (this.char == '.') {
           if (base != 10) {
             this.advance()
@@ -362,7 +362,7 @@
         num.push(this.char);
         this.advance();
       }
-      num = num.join('')
+      num = num.join('');
       if (num.length == 0) {
         this.advance()
         throw new _SyntaxError(`invalid ${bases[base][0]} literal`, pos_start, this.pos.copy());
@@ -386,7 +386,7 @@
       this.advance()
       while (this.char && (this.char != quotation || escape_character)) {
         if (!this.char || this.char == '\n') {
-          throw new _SyntaxError(`unterminated string literal (excepted ${quotation === "'" ? `"'"` : `'${quotation}'`})`, pos_start, this.pos.copy());
+          throw new _SyntaxError(`unterminated string literal (expected ${quotation === "'" ? `"'"` : `'${quotation}'`})`, pos_start, this.pos.copy());
         }
         if (escape_character) {
           escape_character = false;
@@ -418,7 +418,7 @@
         this.advance()
       }
       if (this.char !== quotation) {
-        throw new _SyntaxError(`unterminated string literal (excepted ${quotation === "'" ? `"'"` : `'${quotation}'`})`, pos_start, this.pos.copy());
+        throw new _SyntaxError(`unterminated string literal (expected ${quotation === "'" ? `"'"` : `'${quotation}'`})`, pos_start, this.pos.copy());
       }
       this.advance();
       return new Token(Tokens.STRING, res.join(''), pos_start, this.pos.copy())
@@ -449,6 +449,9 @@
     parse() {
       throw new Error('未实现的抽象方法')
     }
+    parse_html() {
+      throw new Error('未实现的抽象方法');
+    }
   }
   
   class SingleNode extends ASTNode {
@@ -457,8 +460,8 @@
     constructor(value) {
       super()
       this.value = value;
-      this.pos_start = value.pos_start.copy();
-      this.pos_end = value.pos_end.copy();
+      this.pos_start = value.pos_start ? value.pos_start.copy() : null;
+      this.pos_end = value.pos_end ? value.pos_end.copy(): null;
     }
     
     parse() {
@@ -491,6 +494,39 @@
     }
   }
   
+  class WarningNode extends ASTNode {
+    type = 'warning'
+    
+    constructor(value) {
+      super()
+      this.value = value;
+    }
+    
+    parse() {
+      return '';
+    }
+    
+    parse_html() {
+      return `<div class="single warning"><span class="warning_value" contenteditable>${htmlEncode(this.value.value)}</span></div>`
+    }
+  }
+  class ErrorNode extends ASTNode {
+    type = 'error'
+    
+    constructor(value) {
+      super()
+      this.value = value;
+    }
+    
+    parse() {
+      return '';
+    }
+    
+    parse_html() {
+      return `<div class="single error"><span class="error_value" contenteditable>${htmlEncode(this.value.value)}</span></div>`
+    }
+  }
+  
   class ListNode extends ASTNode {
     type = 'list'
     
@@ -504,6 +540,7 @@
     parse(indent) {
       let res = [];
       for (const node of this.items) {
+        if (node instanceof WarningNode || node instanceof ErrorNode) continue;
         res.push(node.parse(indent));
       }
       if (res.length === 0) return '[]';
@@ -539,6 +576,7 @@
       let res = [];
       const add = indent !== undefined && indent !== null ? ' ': '';
       for (const [k, v] of this.items) {
+        if (k instanceof WarningNode || k instanceof ErrorNode || v instanceof WarningNode || v instanceof ErrorNode) continue;
         res.push(k.parse(indent) + ':' + add + v.parse(indent))
       }
       if (res.length === 0) return '{}';
@@ -589,12 +627,13 @@
     }
     
     json() {
-      let res = this.atom()
+      let res = this.atom();
       if (!ISEOF(this.token.type)) {
-        throw new _SyntaxError(
+        const err = new _SyntaxError(
           'the statement must not exist',
           this.token.pos_start, this.token.pos_end,
-        )
+        );
+        return [res, new WarningNode(new Token(Tokens.STRING, err.toString(), null, null))];
       }
       return res;
     }
@@ -641,27 +680,37 @@
         this.advance()
         return new ListNode([], pos_start, this.token.pos_end.copy());
       }
-      let items = this.atoms()
+
+      let items = this.atoms();
       if (this.token.type != Tokens.RSQB) {
+        items.push(new WarningNode(new Token(Tokens.STRING, 'missing a "["', null, null)))
+        /*
         throw new _SyntaxError(
           'expected "]"', 
           pos_start, 
           this.token.pos_end.copy(), 
           this.token.pos_start.copy(), 
           this.token.pos_end.copy(), 
-        )
-      }
-      this.advance();
+        )*/
+      } else this.advance();
       return new ListNode(items, pos_start, this.token.pos_end.copy());
     }
     
     atoms() {
       let pos_start = this.token.pos_start.copy();
-      let items = [this.atom()];
+      let items;
+      try {
+        items = [this.atom()];
+      } catch (e) {
+        return [];
+      }
       while (this.token.type === Tokens.COMMA) {
         this.advance()
-        if (this.token.type === Tokens.RSQB) break
-        items.push(this.atom())
+        if (this.token.type === Tokens.RSQB) break;
+        try {
+          items.push(this.atom());
+        } catch (e) {
+        }
       }
       return items;
     }
@@ -675,20 +724,24 @@
       }
       let items = this.kvpairs()
       if (this.token.type !== Tokens.RBRACE) {
-        throw new _SyntaxError(
+        items.push([
+          new StringNode(new Token(Tokens.STRING, '', null, null)),
+          new WarningNode(new Token(Tokens.STRING, 'expected "}"', null, null)), 
+        ])
+        /*throw new _SyntaxError(
           'expected "}"',
           pos_start,
           this.token.pos_end.copy(), 
           this.token.pos_start.copy(), 
           this.token.pos_end.copy(), 
-        )
-      }
-      this.advance();
+        )*/
+      } else this.advance();
       return new DictNode(items, pos_start, this.token.pos_end.copy());
     }
     
     kvpairs() {
-      let items = [this.kvpair()];
+      let items;
+      items = [this.kvpair()];
       while (this.token.type == Tokens.COMMA) {
         this.advance();
         if (this.token.type == Tokens.RBRACE) break;
@@ -698,23 +751,36 @@
     }
     
     kvpair() {
-      let k = this.key();
+      let k;
+      try {
+        k = this.key();
+      } catch (e) {
+        return [
+          new ErrorNode(new Token(Tokens.STRING, "missing a key", null, null)), 
+          new StringNode(new Token(Tokens.STRING, '', null, null)),
+        ]
+      }
       if (this.token.type !== Tokens.COLON) {
-        throw new _SyntaxError(
-          "expected ':'",
-          this.token.pos_start.copy(),
-          this.token.pos_end.copy(),
-        )
+        return [
+          k,
+          new ErrorNode(new Token(Tokens.STRING, 'expected ":"', null, null)), 
+        ];
       }
       this.advance();
       if (this.token.type === Tokens.COMMA || this.token.type === Tokens.RSQB || this.token.type === Tokens.RBRACE) {
-        throw new _SyntaxError(
-          "expected a value",
-          this.token.pos_start,
-          this.token.pos_end,
-        )
+        return [
+          k,
+          new ErrorNode(new Token(Tokens.STRING, 'expected a value', null, null)), 
+        ];
       }
-      return [k, this.value()];
+      try {
+        return [k, this.value()];
+      } catch (e) {
+        return [
+          k,
+          new ErrorNode(new Token(Tokens.STRING, "expected a value", null, null)), 
+        ]
+      }
     }
     
     key() {
@@ -880,10 +946,14 @@ window.addEventListener('load', () => {
   }
   const make_output = () => {
     let text = input.value.trim();
-    let node = formatting(text)
+    let node = formatting(text);
+    let warning;
     if (isString(node)) {
       res = node;
       output.innerText = res;
+    } else if (isArrayLike(node)) {
+      res = node[0].parse(indent);
+      output.innerHTML = node[0].parse_html(indent) + '<br>' + node[1].parse_html();
     } else {
       res = node.parse(indent)
       output.innerHTML = node.parse_html(indent);

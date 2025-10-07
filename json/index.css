@@ -177,3 +177,28 @@
 .list.collapse .list_items:after {
   content: '...';
 }
+
+.warning {
+  color: #ffc107;
+}
+.error {
+  color: #dc3545;
+}
+
+.warning::before,
+.error::before {
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  vertical-align: bottom;
+  margin-right: 3px;
+}
+.warning::before {
+  background-image: url('warning.svg');
+}
+.error::before {
+  background-image: url('error.svg');
+}
