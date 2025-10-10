@@ -27,7 +27,7 @@
 }
 .editor .numbers {
   min-width: 1.5em;
-  padding: 0 5px;
+  padding: 3px 5px;
   color: #ff8aac;
   border-right: 1px solid #ff8aac;
   overflow: hidden;

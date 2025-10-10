@@ -627,6 +627,7 @@
     }
     
     json() {
+      if (ISEOF(this.token.type)) return [];
       let res = this.atom();
       if (!ISEOF(this.token.type)) {
         const err = new _SyntaxError(
@@ -922,12 +923,12 @@ window.addEventListener('load', () => {
     }
     return lineNumbers;
   }
-  const showLineNumbers = (e) => {
-    const lines = calcLines(e.querySelector('.input'));
+  const showLineNumbers = (ele) => {
+    const lines = calcLines(ele.querySelector('.input'));
     const lineDoms = Array.from({
       length: lines.length,
     }, (_, i) => `<span>${lines[i] || ''}<br></span>`);
-    e.querySelector('.numbers').innerHTML = lineDoms.join('');
+    ele.querySelector('.numbers').innerHTML = lineDoms.join('');
   }
   const make_output = () => {
     let text = input.value.trim();
@@ -937,13 +938,18 @@ window.addEventListener('load', () => {
       res = node;
       output.innerText = res;
     } else if (isArrayLike(node)) {
-      res = node[0].parse(indent);
-      output.innerHTML = node[0].parse_html(indent) + '<br>' + node[1].parse_html();
+      if (node.length == 0) {
+        res = '';
+        output.innerHTML = '';
+      }else {
+        res = node[0].parse(indent);
+        output.innerHTML = node[0].parse_html(indent) + '<br>' + node[1].parse_html();
+      }
     } else {
       res = node.parse(indent)
       output.innerHTML = node.parse_html(indent);
     }
-    s.setItem('output', res);
+    showLineNumbers(output.parentElement);
   }
   
   let input = document.getElementById('input');
@@ -962,18 +968,18 @@ window.addEventListener('load', () => {
     make_output()
   }
   
-  $$('.editor').forEach(e => {
-    showLineNumbers(e);
-    let textarea = e.querySelector('.input')
+  $$('.editor').forEach(editor => {
+    showLineNumbers(editor);
+    let textarea = editor.querySelector('.input')
     const textareaStyles = window.getComputedStyle(textarea);
     [
       'fontFamily', 'fontSize', 'fontWeight', 
-      'letterSpacing', 'lineHeight', 'padding',
+      'letterSpacing', 'lineHeight',
     ].forEach(property => {
-      e.querySelector('.numbers').style[property] = textareaStyles[property];
+      editor.querySelector('.numbers').style[property] = textareaStyles[property];
     });
     textarea.addEventListener('scroll', () => {
-      e.querySelector('.numbers').scrollTo(0, textarea.scrollTop)
+      editor.querySelector('.numbers').scrollTo(0, textarea.scrollTop)
     })
   });
   
@@ -1020,9 +1026,6 @@ window.addEventListener('load', () => {
   });
   input.addEventListener('change', () => {
     s.setItem('input', input.value);
-  });
-  output.addEventListener('change', () => {
-    s.setItem('output', output.value);
   });
   
 });
