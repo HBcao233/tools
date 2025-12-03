@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>带行号的文本编辑器</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  background-color: #f5f5f5;
+  padding: 0;
+}
+
+.editor {
+  border: 2px solid #ff8aac;
+  border-radius: 5px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  padding: 10px 0;
+  background-color: #fff;
+}
+
+.line {
+  padding: 0 8px;
+  display: flex;
+}
+.line-number {
+  flex-shrink: 0;
+  width: 24px;
+  border-right: 1px solid #c5c5c5;
+}
+
+.line-number::before {
+  content: attr(data-line-number);
+}
+.line-content {
+  margin-left: 8px;
+  width: calc(100% - 24px);
+  outline: none;
+}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="editor"><div class="line"><div class="line-number" data-line-number="1"></div><div class="line-content" contenteditable>hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</div></div></div>
+   
+</div>
+<script>
+
+
+document.querySelector('.editor').addEventListener('keydown', function (e) {
+  if (e.key == 'Enter') {
+    e.preventDefault();
+    const currentLine = parseInt(e.target.parentElement.children[0].getAttribute('data-line-number'));
+    let target = e.target.parentElement;
+    let i = 0;
+    while (target = target.nextElementSibling) {
+      target.querySelector('.line-number').setAttribute('data-line-number', currentLine + 2 + i);
+      i++;
+    }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(`<div class="line"><div class="line-number" data-line-number="${currentLine + 1}"></div><div class="line-content" contenteditable></div></div></div>`, 'text/html');
+    const ele = doc.body.firstChild;
+    e.target.parentElement.after(ele);
+    ele.children[1].focus();
+  }
+});
+
+
+  </script>
+</body>
+</html>

@@ -44,7 +44,9 @@ input.input {
 }
 .row .text {
   flex-shrink: 0;
+  width: 3em;
 }
+
 .option {
   display: flex;
 }
@@ -91,4 +93,92 @@ input.input {
   height: auto;
   border: 2px solid #ff8aac;
   border-radius: 10px;
+}
+
+label {
+  display: block;
+}
+
+.upload-area {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #c0c0c0;
+  border-radius: 8px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  background-color: #f9f9f9;
+}
+
+.upload-area:hover {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+}
+
+.upload-area.active {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+}
+
+.plus-icon {
+  font-size: 48px;
+  color: #c0c0c0;
+  transition: all 0.3s;
+}
+
+.upload-area:hover .plus-icon {
+  color: #4a90e2;
+}
+
+.upload-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.upload-area + input {
+  display: none;
+}
+
+.upload-text {
+  position: absolute;
+  bottom: 5px;
+  color: #777;
+  font-size: 14px;
+}
+
+.upload-area.has-image .upload-text {
+  display: none;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.upload-area.has-image .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  background-color: rgba(255, 0, 0, 0.9);
+  transform: scale(1.1);
 }

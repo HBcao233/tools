@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>图片涂抹遮罩工具</title>
+  
+  <link rel="stylesheet" href="./main.css">
+  <script defer src="./main.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>📷 图片涂抹遮罩工具</h1>
+    
+    <input type="file" id="fileInput" accept="image/*">
+    
+    <div class="btn-group">
+      <button class="btn btn-primary" id="selectBtn">选择图片</button>
+      <button class="btn btn-secondary" id="clearBtn" disabled>清除涂抹</button>
+      <button class="btn btn-success" id="exportBtn" disabled>生成遮罩</button>
+    </div>
+    
+    <div class="slider-group" id="sliderGroup">
+      <label>
+        <span>画笔大小</span>
+        <span id="brushValue">30</span>
+      </label>
+      <input type="range" id="brushSize" min="5" max="100" value="30">
+    </div>
+    
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <div class="canvas-container" id="canvasContainer">
+        <canvas id="imageCanvas"></canvas>
+        <canvas id="drawCanvas"></canvas>
+      </div>
+    </div>
+    
+    <div class="output-section" id="outputSection">
+      <h3>🎭 输出遮罩（涂抹区域为白色）</h3>
+      <canvas id="outputCanvas"></canvas>
+      <a class="download-link" id="downloadLink" download="mask.png">💾 保存遮罩图片</a>
+    </div>
+    
+    <p class="tip" id="tip">点击上方按钮选择一张图片开始</p>
+  </div>
+</body>
+</html>

@@ -16,10 +16,12 @@
   <div class="container">
     <h2 class="title">AI 绘画</h2>
     <form class="form">
+      <input type="normal" class="input" name="url" placeholder="API地址" />
       <input type="normal" class="input" id="model" name="model" placeholder="模型" />
       <textarea class="input" id="prompt" name="prompt" placeholder="正面提示词"></textarea>
       <textarea class="input" id="negative_prompt" name="negative_prompt" placeholder="负面提示词"></textarea>
-      <div class="row">
+      
+      <div class="row" style="margin-top: 5px">
         <div class="text">比例</div>
         <label class="option">
           <input type="radio" name="ratio" value="1:1" checked />
@@ -42,6 +44,7 @@
           <div class="text">9:16</div>
         </label>
       </div>
+      
       <div class="row">
         <div class="text">尺寸</div>
         <label class="option">
@@ -61,12 +64,38 @@
           <div class="text">1080p</div>
         </label>
       </div>
-      <label class="field">
+      
+      <div class="row">
         <div class="text">步数</div>
         <input type="normal" class="input" name="steps" value="25" />
-      </label>
+      </div>
+      
+      <div class="upload_image">
+        <span style="vertical-align: bottom">参考图</span>
+        <div class="upload-area" id="upload-area">
+          <div class="plus-icon">+</div>
+          <img src="" alt="预览图片">
+          <div class="upload-text">点击选择/<br>拖拽图片</div>
+          <div class="delete-btn">×</div>
+        </div>
+        <input type="file" name="image" accept="image/*">
+      </div>
+      <p>使用参考图将使用原图比例</p>
+      
+      <div class="upload_image">
+        <span style="vertical-align: bottom">遮罩图</span>
+        <div class="upload-area" id="mask-area">
+          <div class="plus-icon">+</div>
+          <img src="" alt="预览图片">
+          <div class="upload-text">点击选择/<br>拖拽图片</div>
+          <div class="delete-btn">×</div>
+        </div>
+        <input type="file" name="mask" accept="image/*">
+      </div>
+      <p><a href="/mask/" target="_blank">图片涂抹遮罩工具</a></p>
+      
       <div class="controls">
-        <button class="btn draw" type="button">绘画</button>
+        <button type="submit" class="btn" id="draw" type="button">绘画</button>
       </div>
       
       <div id="output"></div>
