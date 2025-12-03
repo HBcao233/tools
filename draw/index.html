@@ -23,46 +23,50 @@
       
       <div class="row" style="margin-top: 5px">
         <div class="text">比例</div>
-        <label class="option">
-          <input type="radio" name="ratio" value="1:1" checked />
-          <div class="text">1:1</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="ratio" value="4:3" />
-          <div class="text">4:3</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="ratio" value="3:4" />
-          <div class="text">3:4</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="ratio" value="16:9" />
-          <div class="text">16:9</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="ratio" value="9:16" />
-          <div class="text">9:16</div>
-        </label>
+        <div class="row wrap">
+          <label class="option">
+            <input type="radio" name="ratio" value="1:1" checked />
+            <div class="text">1:1</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="ratio" value="4:3" />
+            <div class="text">4:3</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="ratio" value="3:4" />
+            <div class="text">3:4</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="ratio" value="16:9" />
+            <div class="text">16:9</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="ratio" value="9:16" />
+            <div class="text">9:16</div>
+          </label>
+        </div>
       </div>
       
       <div class="row">
         <div class="text">尺寸</div>
-        <label class="option">
-          <input type="radio" name="size" value="360" checked />
-          <div class="text">360p</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="size" value="480" />
-          <div class="text">480p</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="size" value="720" />
-          <div class="text">720p</div>
-        </label>
-        <label class="option">
-          <input type="radio" name="size" value="1080" />
-          <div class="text">1080p</div>
-        </label>
+        <div class="row wrap">
+          <label class="option">
+            <input type="radio" name="size" value="360" checked />
+            <div class="text">360p</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="size" value="480" />
+            <div class="text">480p</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="size" value="720" />
+            <div class="text">720p</div>
+          </label>
+          <label class="option">
+            <input type="radio" name="size" value="1080" />
+            <div class="text">1080p</div>
+          </label>
+        </div>
       </div>
       
       <div class="row">
@@ -70,8 +74,13 @@
         <input type="normal" class="input" name="steps" value="25" />
       </div>
       
-      <div class="upload_image">
-        <span style="vertical-align: bottom">参考图</span>
+      <div class="row">
+        <div class="text">强度</div>
+        <input type="normal" class="input" name="strength" value="99" />
+      </div>
+      
+      <div class="upload_image" style="margin-top: 5px">
+        <span class="text">参考图</span>
         <div class="upload-area" id="upload-area">
           <div class="plus-icon">+</div>
           <img src="" alt="预览图片">
@@ -80,10 +89,10 @@
         </div>
         <input type="file" name="image" accept="image/*">
       </div>
-      <p>使用参考图将使用原图比例</p>
+      <p style="margin-left: 3em">使用参考图将使用原图比例</p>
       
       <div class="upload_image">
-        <span style="vertical-align: bottom">遮罩图</span>
+        <span class="text">遮罩图</span>
         <div class="upload-area" id="mask-area">
           <div class="plus-icon">+</div>
           <img src="" alt="预览图片">
@@ -92,7 +101,7 @@
         </div>
         <input type="file" name="mask" accept="image/*">
       </div>
-      <p><a href="/mask/" target="_blank">图片涂抹遮罩工具</a></p>
+      <p style="margin-left: 3em"><a href="/mask/" target="_blank">图片涂抹遮罩工具</a></p>
       
       <div class="controls">
         <button type="submit" class="btn" id="draw" type="button">绘画</button>
