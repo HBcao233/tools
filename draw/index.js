@@ -6,6 +6,14 @@
   window['isArrayLike'] = s => s != null && typeof s[Symbol.iterator] === 'function';
 })();
 
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+const format_filesize = (n) => {
+  if (size < 1024) return `${n} B`;
+  if (size < 1024 * 1024) return `${n / 1024} KB`;
+  return `${n / (1024 * 1024)} MB`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const uploadArea = $('#upload-area');
   const fileInput = $('#upload-area+input');
@@ -38,13 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // 检查文件类型
       if (!file.type.match('image.*')) {
-        showMessage('请选择图片文件！', 'error');
+        alert('请选择图片文件！');
         return;
       }
       
-      // 检查文件大小 (限制为5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        showMessage('图片大小不能超过5MB！', 'error');
+      // 检查文件大小
+      if (file.size > MAX_IMAGE_SIZE) {
+        alert(`图片大小不能超过 ${format_filesize(MAX_IMAGE_SIZE)}`);
         return;
       }
       
@@ -65,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // 检查文件类型
       if (!file.type.match('image.*')) {
-        showMessage('请选择图片文件！', 'error');
+        alert('请选择图片文件！');
         return;
       }
       
-      // 检查文件大小 (限制为5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        showMessage('图片大小不能超过5MB！', 'error');
+      // 检查文件大小
+      if (file.size > MAX_IMAGE_SIZE) {
+        alert(`图片大小不能超过 ${format_filesize(MAX_IMAGE_SIZE)}`);
         return;
       }
       
