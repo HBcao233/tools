@@ -7,7 +7,7 @@
 })();
 
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const format_filesize = (n) => {
   if (size < 1024) return `${n} B`;
   if (size < 1024 * 1024) return `${n / 1024} KB`;
