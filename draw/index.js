@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const url = formData.get('url');
     if (formData.get('image').size == 0) formData.delete('image');
+    if (formData.get('mask').size == 0) formData.delete('mask');
     
     fetch(
       `${url}/api/art`, {
