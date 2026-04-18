@@ -1,5 +1,6 @@
 const fileInput = document.getElementById('fileInput');
 const selectBtn = document.getElementById('selectBtn');
+const eraserBtn = document.getElementById('eraserBtn');
 const clearBtn = document.getElementById('clearBtn');
 const exportBtn = document.getElementById('exportBtn');
 const brushSizeInput = document.getElementById('brushSize');
@@ -23,6 +24,17 @@ let lastY = 0;
 let brushSize = 30;
 let imageLoaded = false;
 let canvasScale = 1;
+let eraser = false;
+
+eraserBtn.addEventListener('click', () => {
+  if (eraser) {
+    eraser = false;
+    eraserBtn.innerText = '○ 橡皮擦';
+  } else {
+    eraser = true;
+    eraserBtn.innerText = '● 橡皮擦';
+  }
+});
 
 selectBtn.addEventListener('click', () => fileInput.click());
 
@@ -105,15 +117,22 @@ function drawPoint(x, y) {
   const size = brushSize / canvasScale;
   
   // 显示层 - 半透明红色
+  drawCtx.save();
+  if (eraser) drawCtx.globalCompositeOperation = 'destination-out';
   drawCtx.beginPath();
   drawCtx.arc(x, y, size / 2, 0, Math.PI * 2);
-  drawCtx.fillStyle = 'rgba(255, 80, 80, 0.5)';
+  drawCtx.fillStyle = 'rgba(255, 80, 80, 1)';
   drawCtx.fill();
+  drawCtx.restore();
   
   // 遮罩层 - 白色
   outputCtx.beginPath();
   outputCtx.arc(x, y, size / 2, 0, Math.PI * 2);
-  outputCtx.fillStyle = '#ffffff';
+  if (!eraser) {
+    outputCtx.fillStyle = '#ffffff';
+  } else {
+    outputCtx.fillStyle = '#000000';
+  }
   outputCtx.fill();
 }
 
@@ -121,20 +140,28 @@ function drawLine(x1, y1, x2, y2) {
   const size = brushSize / canvasScale;
   
   // 显示层
+  drawCtx.save();
+  if (eraser) drawCtx.globalCompositeOperation = 'destination-out';
+  drawCtx.beginPath();
   drawCtx.beginPath();
   drawCtx.moveTo(x1, y1);
   drawCtx.lineTo(x2, y2);
-  drawCtx.strokeStyle = 'rgba(255, 80, 80, 0.5)';
+  drawCtx.strokeStyle = 'rgba(255, 80, 80, 1)';
   drawCtx.lineWidth = size;
   drawCtx.lineCap = 'round';
   drawCtx.lineJoin = 'round';
   drawCtx.stroke();
+  drawCtx.restore();
   
   // 遮罩层
   outputCtx.beginPath();
   outputCtx.moveTo(x1, y1);
   outputCtx.lineTo(x2, y2);
-  outputCtx.strokeStyle = '#ffffff';
+  if (!eraser) {
+    outputCtx.strokeStyle = '#ffffff';
+  } else {
+    outputCtx.strokeStyle = '#000000';
+  }
   outputCtx.lineWidth = size;
   outputCtx.lineCap = 'round';
   outputCtx.lineJoin = 'round';
