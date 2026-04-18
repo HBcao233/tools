@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = false;
       res = await r.json();
       if (res.code != 0) {
-        output.innerText = `生成失败: ${res.message}, 用时: ${time.toFixed(1)}s`;
+        output.innerText = `生成失败: ${res.error}, 用时: ${time.toFixed(1)}s`;
         return
       }
       
